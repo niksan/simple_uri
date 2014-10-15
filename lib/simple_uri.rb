@@ -43,6 +43,10 @@ module SimpleUri
       cookies ? { body: res_body, cookies: res.response['set-cookie'] } : res_body
     end
 
+    def body_to_str_params(body)
+      body.map { |k, v| "#{k.to_s}=#{v.to_s}" }.join('&')
+    end
+
     private
 
       def enable_debug_mode(enabled)
@@ -65,9 +69,6 @@ module SimpleUri
         STDOUT
       end
 
-      def body_to_str_params(body)
-        body.map { |k, v| "#{k.to_s}=#{v.to_s}" }.join('&')
-      end
   end
 
 end
