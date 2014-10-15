@@ -9,6 +9,8 @@ Examples:
 SimpleUri.send_request(url: 'http://somesite.com/qwerty/', method: :post)
 ```
 
+Gem available for ruby 2.1 version
+
 ```ruby
 headers = { 'HEADER-X' => '1',
             'HEADER-Y' => '2' }
