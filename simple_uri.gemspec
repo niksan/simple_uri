@@ -10,6 +10,6 @@ Gem::Specification.new do |s|
   s.description = "To simplify working with url"
   s.authors     = ["Nikulin Aleksander"]
   s.email       = 'nikulinaleksandr@gmail.com'
-  s.files       = ['simple_uri.rb', 'simple_uri/version.rb']
+  s.files       = ['lib/simple_uri.rb', 'lib/simple_uri/version.rb']
   s.homepage    = 'https://github.com/niksan/simple_uri'
 end
