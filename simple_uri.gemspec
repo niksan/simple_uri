@@ -12,4 +12,5 @@ Gem::Specification.new do |s|
   s.email       = 'nikulinaleksandr@gmail.com'
   s.files       = ['lib/simple_uri.rb', 'lib/simple_uri/version.rb']
   s.homepage    = 'https://github.com/niksan/simple_uri'
+  required_ruby_version = '2.1.0'
 end
