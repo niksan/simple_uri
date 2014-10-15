@@ -19,7 +19,7 @@ SimpleUri.send_request(url: 'http://somesite.com/qwerty/', method: :post, req_bo
 headers = { 'HEADER-X' => '1',
             'HEADER-Y' => '2' }
 body = SimpleUri.body_to_str_params({ a: 1, b: 2 })
-SimpleUri.send_request(url: 'http://google.com/qwery/', method: :post, req_body: body, req_headers: headers)
+SimpleUri.send_request(url: 'http://somesite.com/qwerty/', method: :post, req_body: body, req_headers: headers)
 ```
 
 
