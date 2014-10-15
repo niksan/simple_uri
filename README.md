@@ -32,3 +32,8 @@ You can also get cookies:
 ```ruby
 SimpleUri.send_request(url: some_url, method: :get, cookies: true)
 ```
+
+To enable debug_mode - use `debug: true` parameter:
+```ruby
+SimpleUri.send_request(url: some_url, method: :get, debug: true)
+```
