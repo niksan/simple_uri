@@ -1,3 +1,5 @@
+Gem available for ruby 2.1 version
+
 For use in Rails project, add this line to Gemfile
 ```ruby
 gem 'simple_uri'
@@ -8,8 +10,6 @@ Examples:
 ```ruby
 SimpleUri.send_request(url: 'http://somesite.com/qwerty/', method: :post)
 ```
-
-Gem available for ruby 2.1 version
 
 ```ruby
 headers = { 'HEADER-X' => '1',
