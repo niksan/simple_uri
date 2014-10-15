@@ -1,3 +1,8 @@
+For use in Rails project, add this line to Gemfile
+```ruby
+gem 'simple_uri'
+```
+
 Examples:
 
 ```ruby
