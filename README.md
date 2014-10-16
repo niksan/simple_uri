@@ -1,4 +1,4 @@
-Gem available for ruby > 1.9 version
+Gem available for `ruby > 1.9` version
 
 For use in Rails project, add this line to Gemfile
 ```ruby
