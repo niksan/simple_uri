@@ -14,13 +14,14 @@ SimpleUri.send_request(url: 'http://somesite.com/qwerty/', method: :post)
 ```ruby
 headers = { 'HEADER-X' => '1',
             'HEADER-Y' => '2' }
-SimpleUri.send_request(url: 'http://somesite.com/qwerty/', method: :post, req_body: 'a=1', req_headers: headers)
+body = 'a=1&b=2'
+SimpleUri.send_request(url: 'http://somesite.com/qwerty/', method: :post, req_body: body, req_headers: headers)
 ```
 
 ```ruby
 headers = { 'HEADER-X' => '1',
             'HEADER-Y' => '2' }
-body = SimpleUri.body_to_str_params({ a: 1, b: 2 })
+body = { a: 1, b: 2 }
 SimpleUri.send_request(url: 'http://somesite.com/qwerty/', method: :post, req_body: body, req_headers: headers)
 ```
 
