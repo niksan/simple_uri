@@ -10,9 +10,8 @@ module SimpleUri
 
     @@debug_mode = false
 
-    #parameters:url-String, method-Symbol||String, params-String, user-String, password:String, debug-Boolean
-    def connect(url: nil, method: nil, params: nil, user: nil, password: nil, debug: @@debug_mode)
-      enable_debug_mode(debug)
+    def connect(url='', method=nil, options={ params: nil, user: nil, password: nil, debug: @@debug_mode })
+      enable_debug_mode(options[:debug])
       uri = URI.parse(URI.encode(prepare_url(url)))
       http = Net::HTTP.new(uri.host, uri.port)
       http.read_timeout = 1000
@@ -22,16 +21,15 @@ module SimpleUri
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
-      req = "Net::HTTP::#{method.to_s.capitalize}".constantize.new(uri.path+params.to_s)
-      req.basic_auth user, password if user && password
+      req = "Net::HTTP::#{method.to_s.capitalize}".constantize.new(uri.path+options[:params].to_s)
+      req.basic_auth options[:user], options[:password] if options[:user] && options[:password]
       [req, http]
     end
     
-    #parameters:url-String, method-Symbol||String, params-String, req_body-String, req_headers-Hash, user-String, password:String, debug-Boolean, cookies-Boolean
-    def send_request(url: nil, method: nil, params: nil, req_body: nil, req_headers: nil, user: nil, password: nil, debug: @@debug_mode, cookies: false)
-      req, http = connect(url: url, method: method, params: params, user: user, password: password, debug: debug)
-      req.body = prepare_req_body(req_body)
-      req_headers.each { |k, v| req[k] = v } if req_headers
+    def send_request(url=nil, method=:get, options={ params: nil, req_body: nil, req_headers: nil, user: nil, password: nil, debug: @@debug_mode, cookies: false })
+      req, http = connect(url, method, { params: options[:params], user: options[:user], password: options[:password], debug: options[:debug] })
+      req.body = prepare_req_body(options[:req_body])
+      options[:req_headers].each { |k, v| req[k] = v } if options[:req_headers]
       res = http.request(req)
       res.body
       res_body = begin
@@ -40,7 +38,7 @@ module SimpleUri
                    debug_msg 'Can\'t convert response to JSON'
                    res.body
                  end
-      cookies ? { body: res_body, cookies: res.response['set-cookie'] } : res_body
+      options[:cookies] ? { body: res_body, cookies: res.response['set-cookie'] } : res_body
     end
 
     private
