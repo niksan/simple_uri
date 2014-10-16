@@ -40,6 +40,7 @@ module SimpleUri
                  end
       options[:cookies] ? { body: res_body, cookies: res.response['set-cookie'] } : res_body
     end
+    alias req send_request
 
     private
       
