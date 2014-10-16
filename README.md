@@ -8,7 +8,7 @@ gem 'simple_uri'
 Examples:
 
 ```ruby
-SimpleUri.send_request('http://somesite.com/qwerty/') #by default used GET request
+SimpleUri.send_request('http://somesite.com/qwerty/') #by default used GET method
 SimpleUri.req('http://somesite.com/qwerty/')
 ```
 `req` and `send_request` alias methods
