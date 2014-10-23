@@ -22,7 +22,10 @@ module SimpleUri
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
       req = "Net::HTTP::#{method.to_s.capitalize}".constantize.new(uri.path+options[:params].to_s)
-      req.basic_auth options[:user], options[:password] if options[:user] && options[:password]
+      if options[:user] && options[:password]
+        req.basic_auth options[:user], options[:password]
+        debug_msg 'Basic auth'
+      end
       [req, http]
     end
     
@@ -53,7 +56,8 @@ module SimpleUri
       end
       
       def prepare_url(url)
-        unless url.match(/http(s)?:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.\w{2,5}\/.+/) && url[-1]=='/'
+        m = url.match(/http(s)?:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.\w{2,5}(:\d+)?\/([1-9.\w])+(.{0})/)
+        if m && m[0]==url && url[-1]!=='/'
           url += '/'
           debug_msg 'Append \'/\' to url.'
         end
