@@ -54,10 +54,10 @@ module SimpleUri
       
       def prepare_url(url)
         m = url.match(/http(s)?:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.\w{2,5}(:\d+)?\/([1-9.\w])+(.{0})/)
-        #if m && m[0]==url && url[-1] != '/'
-        #  url += '/'
-        #  debug_msg 'Append \'/\' to url.'
-        #end
+        if m && m[0]==url && url[-1] != '/'
+          url += '/'
+          debug_msg 'Append \'/\' to url.'
+        end
         url
       end
 
