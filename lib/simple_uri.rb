@@ -21,7 +21,7 @@ module SimpleUri
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
-      req = "Net::HTTP::#{method.to_s.capitalize}".constantize.new(uri.path+'?'+prepare_req_body(options[:params]).to_s)
+      req = "Net::HTTP::#{method.to_s.capitalize}".constantize.new(uri.path+options[:params].to_s)
       if options[:user] && options[:password]
         req.basic_auth options[:user], options[:password]
         debug_msg 'Basic auth'
@@ -29,13 +29,13 @@ module SimpleUri
       [req, http]
     end
     
-    def send_request(url=nil, method=:get, options={ req_body: nil, req_headers: nil, user: nil, password: nil, debug: @@debug_mode, cookies: false })
-      multipart = false
-      params = options[:req_body] unless multipart
-      req, http = connect(url, method, { params: params, user: options[:user], password: options[:password], debug: options[:debug] })
-      req.body = prepare_req_body(options[:req_body]) if multipart
+    def send_request(url=nil, method=:get, options={ params: nil, req_body: nil, req_headers: nil, user: nil, password: nil, debug: @@debug_mode, cookies: false })
+      options[:params] = (method==:post) ? nil : '?'+prepare_req_body(options[:req_body])
+      req, http = connect(url, method, { params: options[:params], user: options[:user], password: options[:password], debug: options[:debug] })
+      req.body = prepare_req_body(options[:req_body]) if method == :post
       options[:req_headers].each { |k, v| req[k] = v } if options[:req_headers]
       res = http.request(req)
+      res.body
       res_body = begin
                    JSON.parse(res.body)
                  rescue
@@ -54,10 +54,10 @@ module SimpleUri
       
       def prepare_url(url)
         m = url.match(/http(s)?:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.\w{2,5}(:\d+)?\/([1-9.\w])+(.{0})/)
-        if m && m[0]==url && url[-1] != '/'
-          url += '/'
-          debug_msg 'Append \'/\' to url.'
-        end
+        #if m && m[0]==url && url[-1] != '/'
+        #  url += '/'
+        #  debug_msg 'Append \'/\' to url.'
+        #end
         url
       end
 
