@@ -30,7 +30,8 @@ module SimpleUri
     end
     
     def send_request(url=nil, method=:get, options={ params: nil, req_body: nil, req_headers: nil, user: nil, password: nil, debug: @@debug_mode, cookies: false })
-      options[:params] = (method==:post && options[:req_body].present?) ? nil : '?'+prepare_req_body(options[:req_body]).to_s
+      get_params = options[:req_body].present? ? '?'+prepare_req_body(options[:req_body]).to_s : ''
+      options[:params] = method==:post ? nil : get_params
       req, http = connect(url, method, { params: options[:params], user: options[:user], password: options[:password], debug: options[:debug] })
       req.body = prepare_req_body(options[:req_body]) if method == :post
       options[:req_headers].each { |k, v| req[k] = v } if options[:req_headers]
