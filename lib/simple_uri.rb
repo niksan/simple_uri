@@ -8,10 +8,9 @@ module SimpleUri
 
   class << self
 
-    @@debug_mode = false
+    MODES = { debug: false, autofix: false }
 
-    def connect(url='', method=nil, options={ params: nil, user: nil, password: nil, debug: @@debug_mode })
-      enable_debug_mode(options[:debug])
+    def connect(url='', method=nil, options={ params: nil, user: nil, password: nil, debug: debug_mode })
       uri = URI.parse(URI.encode(prepare_url(url)))
       http = Net::HTTP.new(uri.host, uri.port)
       http.read_timeout = 1000
@@ -29,7 +28,9 @@ module SimpleUri
       [req, http]
     end
     
-    def send_request(url=nil, method=:get, options={ params: nil, req_body: nil, req_headers: nil, user: nil, password: nil, debug: @@debug_mode, cookies: false })
+    def send_request(url=nil, method=:get, options={ params: nil, req_body: nil, req_headers: nil, user: nil, password: nil, debug: debug_mode, autofix: autofix_mode, cookies: false })
+      enable_debug_mode(options[:debug])
+      enable_autofix_mode(options[:autofix])
       get_params = options[:req_body] ? '?'+prepare_req_body(options[:req_body]).to_s : ''
       options[:params] = method==:post ? nil : get_params
       req, http = connect(url, method, { params: options[:params], user: options[:user], password: options[:password], debug: options[:debug] })
@@ -54,32 +55,48 @@ module SimpleUri
       end
       
       def prepare_url(url)
-        m = url.match(/http(s)?:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.\w{2,5}(:\d+)?\/([1-9.\w])+(.{0})/)
-        if m && m[0]==url && url[-1] != '/'
-          url += '/'
-          debug_msg 'Append \'/\' to url.'
+        if autofix_mode
+          m = url.match(/http(s)?:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.\w{2,5}(:\d+)?\/([1-9.\w])+(.{0})/)
+          if m && m[0]==url && url[-1] != '/'
+            url += '/'
+            debug_msg 'Append \'/\' to url.'
+          end
         end
         url
       end
 
       def enable_debug_mode(enabled)
         if enabled
-          @@debug_mode = true
+          debug_mode(true)
           @log = Logger.new(debug_output)
           @log.level = Logger::DEBUG
         end
       end
 
+      def enable_autofix_mode(enabled)
+        autofix_mode(true) if enabled
+      end
+
       def debug_msg(msg)
-        @log.debug(msg) if @log && @@debug_mode
+        @log.debug(msg) if @log && debug_mode
       end
       
       def debug_http(http)
-        http.set_debug_output(debug_output) if @@debug_mode
+        http.set_debug_output(debug_output) if debug_mode
       end
 
       def debug_output
         STDOUT
+      end
+
+      def debug_mode(mode=nil)
+        MODES[:debug]=mode unless mode.nil?
+        MODES[:debug]
+      end
+
+      def autofix_mode(mode=nil)
+        MODES[:autofix]=mode unless mode.nil?
+        MODES[:autofix]
       end
 
   end
