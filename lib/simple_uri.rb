@@ -32,9 +32,9 @@ module SimpleUri
       enable_debug_mode(options[:debug])
       enable_autofix_mode(options[:autofix])
       get_params = options[:req_body] ? '?'+prepare_req_body(options[:req_body]).to_s : ''
-      options[:params] = method==:post ? nil : get_params
+      options[:params] = (method==:post || method==:put) ? nil : get_params
       req, http = connect(url, method, { params: options[:params], user: options[:user], password: options[:password], debug: options[:debug] })
-      req.body = prepare_req_body(options[:req_body]) if method == :post
+      req.body = prepare_req_body(options[:req_body]) if (method==:post || method==:put)
       options[:req_headers].each { |k, v| req[k] = v } if options[:req_headers]
       res = http.request(req)
       res.body
@@ -56,7 +56,7 @@ module SimpleUri
       
       def prepare_url(url)
         if autofix_mode
-          m = url.match(/http(s)?:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.\w{2,5}(:\d+)?\/([1-9.\w])+(.{0})/)
+          m = url.match(/http(s)?:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.\w{2,5}(:\d+)?\/([1-9.\w])+(.{0})/) #TODO
           if m && m[0]==url && url[-1] != '/'
             url += '/'
             debug_msg 'Append \'/\' to url.'
